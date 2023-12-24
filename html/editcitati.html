@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Izmjena Citata</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    table {
+      width: 80%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #4caf50;
+      color: #fff;
+    }
+    h2 {
+      margin-top: 20px;
+    }
+
+    label {
+      margin-right: 8px;
+    }
+
+    input, button {
+      padding: 8px;
+      margin-bottom: 16px;
+    }
+
+    button {
+      background-color: #4caf50;
+      color: #fff;
+      cursor: pointer;
+    }
+  </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Dohvati podatke kad se stranica učita
+      osvjeziPodatke();
+    });
+
+    function osvjeziPodatke() {
+      // Dohvati podatke s API-ja
+      fetch('http://localhost:3000/api/citat-all')
+        .then(response => response.json())
+        .then(data => {
+          const tableBody = document.querySelector('table tbody');
+          // Očisti trenutni sadržaj tablice
+          tableBody.innerHTML = '';
+          // Dodaj redove u tablicu
+          data.forEach(row => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${row.Citat_iz_knj}</td><td>${row.ID_Citata}</td>`;
+            tableBody.appendChild(tr);
+          });
+        })
+        .catch(error => console.error('Error fetching authors:', error));
+    }
+
+    function obrisiCitat() {
+      const id = document.getElementById('deleteCitataID').value;
+
+      // Provjerite jeste li uneseni valjan ID
+      if (!id || isNaN(id)) {
+        alert('Unesite valjan ID citata.');
+        return;
+      }
+
+      // Poziv API-ja za brisanje citata
+      fetch(`http://localhost:3000/api/citat/del/${id}`, { method: 'DELETE' })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.text();
+        })
+        .then(data => {
+          console.log(data); // Ispis poruke iz servera
+          alert('Citat uspješno obrisan.');
+          // Ažuriraj tablicu s novim podacima
+          osvjeziPodatke();
+        })
+        .catch(error => console.error('Error deleting citat:', error));
+    }
+    function izmijeniCitat() {
+      const id = document.getElementById('ID_Citata').value;
+      const noviCitat = document.getElementById('noviCitat').value;
+     
+
+      // Provjerite jeste li uneseni valjani podaci
+      if (!id||isNaN(id)  || !noviCitat  ) {
+        alert('Unesite valjane podatke.');
+        return;
+      }
+
+      // Poziv API-ja za izmjenu citata
+      fetch(`http://localhost:3000/api/citat/update/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ Citat_iz_knj: noviCitat, ID_Citata: id }),
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.text();
+        })
+        .then(data => {
+          console.log(data); // Ispis poruke iz servera
+          alert('Citat uspješno izmijenjen.');
+          // Ažuriraj tablicu s novim podacima
+          osvjeziPodatke();
+        })
+        .catch(error => console.error('Error updating citat:', error));
+    }
+  </script>
+</head>
+<body>
+  <h1>Prikaz Citata</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Citat</th>
+        <th>ID</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Ovdje će se dinamički dodati redovi -->
+    </tbody>
+  </table>
+
+  <h2>Brisanje citata</h2>
+  <label for="deleteAuthorId">ID citata:</label>
+  <input type="text" id="deleteCitataID" name="deleteCitataID" required>
+  <button onclick="obrisiCitat()">Obriši citat</button>
+
+  <h2>Izmjena Citata</h2>
+  <label for="ID_Citata">ID citata:</label>
+  <input type="text" id="ID_Citata" name="ID_Citata" required>
+  <label for="noviCitat">Novi Citat:</label>
+  <input type="text" id="noviCitat" name="noviCitat" required>
+  <button onclick="izmijeniCitat()">Izmijeni citat</button>
+</body>
+</html>

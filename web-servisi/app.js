@@ -159,6 +159,124 @@ app.get('/api/autor', (req, res) => {
     res.json(results);
   });
 });
+
+// Ruta za prikaz autora + id
+app.get('/api/autor-all', (req, res) => {
+  const query = 'SELECT ID_Aut, Ime_Aut, Prezime_Aut FROM Autor';
+  dbConn.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching authors from database:', err.message);
+      return res.status(500).send('Internal Server Error');
+    }
+    res.json(results);
+  });
+});
+
+// Ruta za prikaz citata + id
+app.get('/api/citat-all', (req, res) => {
+  const query = 'SELECT ID_Citata, Citat_iz_knj FROM Citat';
+  dbConn.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching authors from database:', err.message);
+      return res.status(500).send('Internal Server Error');
+    }
+    res.json(results);
+  });
+});
+
+
+// Ruta za brisanje autora
+app.delete('/api/autor/del/:id', (req, res) => {
+  const id = req.params.id;
+  console.log('Trying to delete author with ID:', id);
+
+  const query = 'DELETE FROM Autor WHERE ID_Aut = ?';
+  dbConn.query(query, [id], (err, results) => {
+    if (err) {
+      console.error('Error deleting author from database:', err.message);
+      return res.status(500).send('Internal Server Error');
+    }
+    console.log('Author deleted successfully');
+    res.send('Author deleted successfully');
+  });
+});
+// Ruta za brisanje citata
+app.delete('/api/citat/del/:id', (req, res) => {
+  const ID_Citata = req.params.id;
+  console.log('Trying to delete citat with ID:', ID_Citata);
+
+  const query = 'DELETE FROM Citat WHERE ID_Citata = ?';
+  dbConn.query(query, [ID_Citata], (err, results) => {
+    if (err) {
+      console.error('Error deleting citat from database:', err.message);
+      return res.status(500).send('Internal Server Error');
+    }
+    console.log('Citat deleted successfully');
+    res.send('Citat deleted successfully');
+  });
+});
+
+// Ruta za izmjenu autora
+app.put('/api/autor/update/:id', (req, res) => {
+  const ID_Aut = req.params.id;
+  const Ime_Aut = req.body.Ime_Aut;
+  const Prezime_Aut = req.body.Prezime_Aut;
+
+  // Provjeri jesu li uneseni potrebni podaci
+  if (!Ime_Aut || !Prezime_Aut || isNaN(ID_Aut)) {
+    return res.status(400).json({ error: 'Molimo ispunite sva polja.' });
+  }
+
+  // Izmijeni autora u bazi
+  const query = 'UPDATE Autor SET Ime_Aut=?, Prezime_Aut=? WHERE ID_Aut=?';
+  dbConn.query(query, [Ime_Aut, Prezime_Aut, ID_Aut], (err, results) => {
+    if (err) {
+      console.error('Error updating author in database:', err.message);
+      return res.status(500).send('Internal Server Error');
+    }
+
+    // Provjeri je li autor izmijenjen
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ error: 'Autor nije pronađen.' });
+    }
+
+    // Vrati uspješan odgovor
+    res.status(200).send('Autor uspješno izmijenjen.');
+  });
+});
+
+// Ruta za izmjenu citata
+app.put('/api/citat/update/:id', (req, res) => {
+  const ID_Citata = req.params.id;
+  const Citat_iz_knj = req.body.Citat_iz_knj;
+
+  // Provjeri jesu li uneseni potrebni podaci
+  if ( !Citat_iz_knj || isNaN(ID_Citata)) {
+    return res.status(400).json({ error: 'Molimo ispunite sva polja.' });
+  }
+
+  // Izmijeni citata u bazi
+  const query = 'UPDATE Citat SET Citat_iz_knj=? WHERE ID_Citata=?';
+  dbConn.query(query, [Citat_iz_knj, ID_Citata], (err, results) => {
+    if (err) {
+      console.error('Error updating citat in database:', err.message);
+      return res.status(500).send('Internal Server Error');
+    }
+
+    // Provjeri je li citata izmijenjen
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ error: 'Citat nije pronađen.' });
+    }
+
+    // Vrati uspješan odgovor
+    res.status(200).send('Citat uspješno izmijenjen.');
+  });
+});
+
+
+
+
+
 // Posluživanje HTML forme
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'html', 'index.html'));
@@ -173,6 +291,13 @@ app.get('/', (req, res) => {
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'html', 'citat.html'));
 });
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'html', 'editautori.html'));
+});
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'html', 'editcitati.html'));
+});
+
 
 
 

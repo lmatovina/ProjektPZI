@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Izmjena Autora</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    table {
+      width: 80%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #4caf50;
+      color: #fff;
+    }
+    h2 {
+      margin-top: 20px;
+    }
+
+    label {
+      margin-right: 8px;
+    }
+
+    input, button {
+      padding: 8px;
+      margin-bottom: 16px;
+    }
+
+    button {
+      background-color: #4caf50;
+      color: #fff;
+      cursor: pointer;
+    }
+  </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Dohvati podatke kad se stranica učita
+      osvjeziPodatke();
+    });
+
+    function osvjeziPodatke() {
+      // Dohvati podatke s API-ja
+      fetch('http://localhost:3000/api/autor-all')
+        .then(response => response.json())
+        .then(data => {
+          const tableBody = document.querySelector('table tbody');
+          // Očisti trenutni sadržaj tablice
+          tableBody.innerHTML = '';
+          // Dodaj redove u tablicu
+          data.forEach(row => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${row.Ime_Aut}</td><td>${row.Prezime_Aut}</td><td>${row.ID_Aut}</td>`;
+            tableBody.appendChild(tr);
+          });
+        })
+        .catch(error => console.error('Error fetching authors:', error));
+    }
+
+    function obrisiAutora() {
+      const id = document.getElementById('deleteAuthorId').value;
+
+      // Provjerite jeste li uneseni valjan ID
+      if (!id || isNaN(id)) {
+        alert('Unesite valjan ID autora.');
+        return;
+      }
+
+      // Poziv API-ja za brisanje autora
+      fetch(`http://localhost:3000/api/autor/del/${id}`, { method: 'DELETE' })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.text();
+        })
+        .then(data => {
+          console.log(data); // Ispis poruke iz servera
+          alert('Autor uspješno obrisan.');
+          // Ažuriraj tablicu s novim podacima
+          osvjeziPodatke();
+        })
+        .catch(error => console.error('Error deleting author:', error));
+    }
+    function izmijeniAutora() {
+      const id = document.getElementById('editAuthorId').value;
+      const novoIme = document.getElementById('novoIme').value;
+      const novoPrezime = document.getElementById('novoPrezime').value;
+
+      // Provjerite jeste li uneseni valjani podaci
+      if (!id || isNaN(id) || !novoIme || !novoPrezime) {
+        alert('Unesite valjane podatke.');
+        return;
+      }
+
+      // Poziv API-ja za izmjenu autora
+      fetch(`http://localhost:3000/api/autor/update/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ Ime_Aut: novoIme, Prezime_Aut: novoPrezime, ID_Aut: id }),
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.text();
+        })
+        .then(data => {
+          console.log(data); // Ispis poruke iz servera
+          alert('Autor uspješno izmijenjen.');
+          // Ažuriraj tablicu s novim podacima
+          osvjeziPodatke();
+        })
+        .catch(error => console.error('Error updating author:', error));
+    }
+  </script>
+</head>
+<body>
+  <h1>Prikaz Autora</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Ime</th>
+        <th>Prezime</th>
+        <th>ID</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Ovdje će se dinamički dodati redovi -->
+    </tbody>
+  </table>
+
+  <h2>Brisanje autora</h2>
+  <label for="deleteAuthorId">ID autora:</label>
+  <input type="text" id="deleteAuthorId" name="deleteAuthorId" required>
+  <button onclick="obrisiAutora()">Obriši autora</button>
+
+  <h2>Izmjena autora</h2>
+  <label for="editAuthorId">ID autora:</label>
+  <input type="text" id="editAuthorId" name="editAuthorId" required>
+  <label for="novoIme">Novo ime:</label>
+  <input type="text" id="novoIme" name="novoIme" required>
+  <label for="novoPrezime">Novo prezime:</label>
+  <input type="text" id="novoPrezime" name="novoPrezime" required>
+  <button onclick="izmijeniAutora()">Izmijeni autora</button>
+</body>
+</html>
