@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Citati  </title>
+  <!-- Dodajte svoj CSS za stilizaciju ovdje -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      display: flex;
+      justify-content: space-between;
+      width: 80%;
+      background-color: #fff;
+      margin: 20px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+
+    .form-container {
+      width: 30%;
+      margin-right: 20px;
+    }
+
+    .form-container form {
+      margin-bottom: 20px;
+    }
+
+    .quote-container {
+      width: 65%;
+    }
+
+    h2 {
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #555;
+    }
+
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: #4caf50;
+      color: #fff;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Forma za unos autora -->
+    <div class="form-container">
+      <h2>Unos autora</h2>
+      <form action="http://localhost:3000/api/add-author" method="post">
+        <label for="Ime_Aut">Ime autora:</label>
+        <input type="text" id="Ime_Aut" name="Ime_Aut" required>
+        <br>
+        <label for="Prezime_Aut">Prezime autora:</label>
+        <input type="text" id="Prezime_Aut" name="Prezime_Aut" required>
+        <br>
+        <button type="submit">Dodaj autora</button>
+        <input type="button" onclick="location.href='autori.html '" value="Prikaz Autora"  />
+
+      </form>
+    </div>
+
+    <!-- Forma za unos knjige -->
+    <div class="form-container">
+      <h2>Unos knjige</h2>
+      <form action="http://localhost:3000/api/add-book" method="post">
+        <label for="naziv">Naziv knjige:</label>
+        <input type="text" id="naziv" name="naziv" required>
+        <br>
+        <label for="godina">Godina izdanja:</label>
+        <input type="number" id="godina" name="godina" required>
+        <br>
+        <label for="zanr">Žanr knjige:</label>
+        <input type="text" id="zanr" name="zanr" required>
+        <br>
+        <label for="imeAutora">Ime autora:</label>
+        <input type="text" id="imeAutora" name="imeAutora" required>
+        <br>
+        <label for="prezimeAutora">Prezime autora:</label>
+        <input type="text" id="prezimeAutora" name="prezimeAutora" required>
+        <br>
+        <button type="submit">Dodaj knjigu</button>
+        <input type="button" onclick="location.href='knjige.html '" value="Prikaz Knjiga"  />
+      </form>
+    </div>
+
+    <!-- Forma za unos citata -->
+    <div class="form-container">
+      <h2>Unos citata</h2>
+      <form action="http://localhost:3000/api/add-quote" method="post">
+        <label for="citat">Citat:</label>
+        <input type="text" id="citat" name="citat" required>
+        <br>
+        <label for="imeKnjige">Naziv knjige:</label>
+        <input type="text" id="imeKnjige" name="imeKnjige" required>
+        <br>
+        <button type="submit">Dodaj citat</button>
+        <input type="button" onclick="location.href='citati.html '" value="Prikaz Citata"  />
+      </form>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Ovdje možete dodati elemente za prikaz unesenih citata, autora i knjiga -->
+    <div class="quote-container">
+      <!-- Prikaz citata -->
+    </div>
+  </div>
+</body>
+</html>

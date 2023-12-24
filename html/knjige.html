@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prikaz Knjiga</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    table {
+      width: 80%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #4caf50;
+      color: #fff;
+    }
+  </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Dohvati podatke kad se stranica učita
+      fetch('http://localhost:3000/api/knjige')
+        .then(response => response.json())
+        .then(data => {
+          const tableBody = document.querySelector('table tbody');
+          data.forEach(row => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${row.Naziv_knj}</td><td>${row.Godina_izd}</td><td>${row.Zanr_knj}</td><td>${row.Ime_Aut} ${row.Prezime_Aut}</td>`;
+            tableBody.appendChild(tr);
+          });
+        })
+        .catch(error => console.error('Error fetching books:', error));
+    });
+  </script>
+</head>
+<body>
+  <h1>Prikaz Knjiga</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Naziv knjige</th>
+        <th>Godina izdanja</th>
+        <th>Žanr knjige</th>
+        <th>Autor</th>
+    
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Ovdje će se dinamički dodati redovi -->
+    </tbody>
+  </table>
+</body>
+</html>
